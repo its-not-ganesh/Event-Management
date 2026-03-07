@@ -5,9 +5,10 @@ FROM ${BASE_IMAGE}
 
 # Set up the Python development environment
 WORKDIR /app
-COPY Pipfile Pipfile.lock ./
+COPY Pipfile ./
+ENV PIPENV_SYSTEM=1
 RUN sudo python -m pip install --upgrade pip pipenv && \
-    sudo pipenv install --system --dev
+    sudo pipenv install --dev
 
 # Install user mode tools
 COPY .devcontainer/scripts/install-tools.sh /tmp/
