@@ -59,8 +59,16 @@ Event-Management/
 
 This project uses a **self-built base image** instead of pulling a pre-built one. Build it once before opening the dev container:
 
+**Linux / macOS / Git Bash:**
+
 ```bash
 make base-build
+```
+
+**Windows PowerShell** (if `make` is not available):
+
+```powershell
+docker build --rm --tag event-mgmt-base:latest docker/base/
 ```
 
 This creates `event-mgmt-base:latest` locally from `docker/base/Dockerfile`, which includes:
@@ -142,6 +150,8 @@ make secret
 
 ## Makefile Targets
 
+> **Windows users:** If `make` is not installed, see the [Windows PowerShell equivalents](#windows-powershell-equivalents) section below for direct commands.
+
 | Target | Description |
 |--------|-------------|
 | `make help` | Display all available targets |
@@ -158,6 +168,26 @@ make secret
 | `make build` | Build the production container image |
 | `make push` | Push image to container registry |
 | `make buildx` | Build multi-platform production image |
+
+---
+
+## Windows PowerShell Equivalents
+
+If you're on Windows and `make` is not available, use these commands directly in PowerShell:
+
+| Make Target | PowerShell Command |
+|---|---|
+| `make base-build` | `docker build --rm --tag event-mgmt-base:latest docker/base/` |
+| `make build` | `docker build --rm --pull --tag cluster-registry:5000/event-management:1.0 .` |
+| `make push` | `docker push cluster-registry:5000/event-management:1.0` |
+| `make run` | `honcho start` |
+| `make test` | `$env:RETRY_COUNT=1; pytest --pspec --cov=service --cov-fail-under=95 --disable-warnings` |
+| `make lint` | `flake8 service tests --count --max-complexity=10 --max-line-length=127 --statistics; pylint service tests --max-line-length=127` |
+| `make secret` | `python -c "import secrets; print(secrets.token_hex())"` |
+| `make deploy` | `kubectl apply -R -f k8s/` |
+| `make cluster` | `k3d cluster create nyu-devops --agents 2 --registry-create cluster-registry:0.0.0.0:5000 --port '8080:80@loadbalancer'` |
+| `make cluster-rm` | `k3d cluster delete nyu-devops` |
+| `make clean` | `docker image prune -f; docker buildx prune -f` |
 
 ---
 
