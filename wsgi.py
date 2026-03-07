@@ -1,0 +1,10 @@
+"""
+Web Server Gateway Interface (WSGI) entry point
+"""
+
+import os
+from service import create_app
+
+PORT = int(os.getenv("PORT", "8080"))
+
+app = create_app()
