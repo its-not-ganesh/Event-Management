@@ -15,10 +15,20 @@ echo "Architecture is:" $ARCH
 echo "**********************************************************************"
 echo "Installing Rancher K3D Kubernetes..."
 echo "**********************************************************************"
-curl -s "https://raw.githubusercontent.com/rancher/k3d/main/install.sh" | sudo bash
+release=$(curl -s https://dl.k8s.io/release/stable.txt)
+curl -LO "https://dl.k8s.io/release/${release}/bin/linux/${ARCH}/kubectl"
+chmod +x ./kubectl
+sudo install -c -m 0755 kubectl /usr/local/bin
+rm ./kubectl
 echo "Creating kc and kns alias for kubectl..."
-echo "alias kc='/usr/local/bin/kubectl'" >> $HOME/.bash_aliases
 echo "alias kns='kubectl config set-context --current --namespace'" >> $HOME/.bash_aliases
+echo "alias kc='/usr/local/bin/kubectl'" >> $HOME/.bash_aliases
+
+echo "**********************************************************************"
+echo "Installing Rancher K3D Kubernetes..."
+echo "**********************************************************************"
+curl -s "https://raw.githubusercontent.com/rancher/k3d/main/install.sh" | sudo bash
+echo "Creating the cluster-registry entry in /etc/hosts..."
 sudo sh -c 'echo "127.0.0.1 cluster-registry" >> /etc/hosts'
 
 echo "**********************************************************************"
